@@ -8,7 +8,7 @@ POST http://localhost:3000/produtos
 Content-Type: application/json
 
 {
-    "id":"1",
+    "id":"2",
     "nome":"GTX 4090 24gb",
     "preco":14450
 }
@@ -29,3 +29,6 @@ Content-Type: application/json
 ###
 DELETE http://localhost:3000/produtos/1
 Content-Type: application/json
+
+###
+DELETE http://localhost:3000/produtos

@@ -57,18 +57,19 @@ app.post('/produtos', (requisicao, resposta) => {
 
 app.put('/produtos/:id', (requisicao, resposta) => {
   try {
-    const produto = bancoDados.find(i => i.id ===
-       requisicao.params.id);
+    const id = requisicao.params.id
     const {novoNome, novoPreco} = requisicao.body;
     if(!id){
       return resposta.status(404).json({msg:"Informe um parametro"})
     }
+    const produto = bancoDados.find(i => i.id ===
+      id)
     if(!produto){
       return resposta.status(404).json({msg:"Produto não encontrado"})
     }
     if(produto){
       produto.nome = novoNome,
-      produto.preco = novoPreco
+      produto.preco = novoPreco;
     }
    resposta.status(200).json({msg:'Produto atualizado com sucesso'})
   } catch (error) {
@@ -88,6 +89,14 @@ app.delete('/produtos/:id', (requisicao, resposta) => {
   } catch (error) {
     resposta.status(500).json({msg:"Erro ao deletar produto"})
   }
+})
+
+app.delete('/produtos', (requisicao, resposta) => {
+try {
+  bancoDados.length = 0;
+} catch (error) {
+  resposta.status(500).json({msg:"Erro ao deletar produto"})
+}
 })
 
 app.listen(port, () => {
