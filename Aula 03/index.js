@@ -30,12 +30,15 @@ app.get('/produtos', async (requisicao, resposta) => {
 
 });
 
-app.get('/produtos/:id', (requisicao, resposta) => {
+app.get('/produtos/:id', async (requisicao, resposta) => {
   try {
-    const query = `select * from produto`
-    if(!query){
+    const id = requisicao.params.id;
+    const dados = [id]
+    const consulta = `select * from produto where id = $1`
+    const resultado = await pool.query(consulta, dados)
+     if(resultado.rows.length === 0){
       return resposta.status(404).json({msg:"Produto não encontrado"})}
-      resposta.status(200).json(produto);
+      resposta.status(200).json(resultado.rows);
   } catch (error) {
     resposta.status(500).json({msg:"Erro ao buscar banco de dados"})
   }
@@ -43,13 +46,13 @@ app.get('/produtos/:id', (requisicao, resposta) => {
 
 app.post('/produtos', async (requisicao, resposta) => {
   try {
-    const [nome, preco, quantidade ] = requisicao.body;
+    const {nome, preco, quantidade } = requisicao.body;
     if(!nome || !preco || !quantidade){
       return resposta.status(200).json({msg:"Todos os dados devem ser preenchidos"})
     }
-    const novoProduto = {nome, preco, quantidade };
-    const consulta = `Insert into produto(nome, preco, quantidade) 
-                  values($1, $2, $3) returning*` 
+    const novoProduto = [nome, preco, quantidade];
+    const consulta = `Insert into produto(nome, preco, quantidade) values($1, $2, $3) returning*`
+    await pool.query(consulta, novoProduto) 
     resposta.status(201).json({ mensagem: "Produto criado com sucesso" });
   } catch (error) {
     resposta.status(500).json({msg:"Erro ao registrar produto"})
@@ -59,41 +62,52 @@ app.post('/produtos', async (requisicao, resposta) => {
 
 app.put('/produtos/:id', async (requisicao, resposta) => {
   try {
-    const id = requisicao.params.id
+    const id = requisicao.params.id;
+    const {novoNome, novoPreco, novaQuantidade} = requisicao.body;
+    if(!id){
+      return resposta.status(404).json({msg:'Informe o parametro!'})
+    }
     const parametro = [id]
     const consulta = `select * from produto where id = $1`
     const resultado = await pool.query(consulta, parametro)
     if(resultado.rows.length === 0){
       return resposta.status(404).json({msg:"Produto não encontrado"})
     }
-    const dados = [ id, novoNome, novoPreco, novaQuantidade] 
-      const update = `update produto set nome = $2, preco = 3$, quantidade = 4$  where id = $1 returning*`
+    const dados = [id, novoNome, novoPreco, novaQuantidade] 
+    const update = `update produto set nome = $2, preco = $3, quantidade = $4  where id = $1 returning *`
     await pool.query(update, dados)
    resposta.status(200).json({msg:'Produto atualizado com sucesso'})
   } catch (error) {
-    resposta.status(500).json({msg:"Erro ao atualizar produto"})
+    resposta.status(500).json({msg:"Erro ao atualizar produto", erro: error.message})
+    
   }
 })
 
-app.delete('/produtos/:id', (requisicao, resposta) => {
+app.delete('/produtos/:id', async (requisicao, resposta) => {
   try {
-    const produto = bancoDados.findIndex(i => i.id ===
-      requisicao.params.id);
-    if(produto === -1){
+    const id = requisicao.params.id;
+    const parametro = [id]
+    const consulta = `select * from produto where id = $1`
+    const resultado = await pool.query(consulta, parametro)
+    if(resultado.rows.length === 0){
       return resposta.status(404).json({msg:"Produto não encontrado"})
     }
-    bancoDados.splice(produto, 1)
+    const dados = [id]
+    const deleta = `delete from produto where id = $1`
+    await pool.query(deleta, dados)
+
     resposta.status(200).json({msg:"Produto deletado com sucesso"})
   } catch (error) {
-    resposta.status(500).json({msg:"Erro ao deletar produto"})
+    resposta.status(500).json({msg:"Erro ao deletar produto", erro: error.message})
   }
 })
 
-app.delete('/produtos', (requisicao, resposta) => {
+app.delete('/produtos', async (requisicao, resposta) => {
 try {
-  bancoDados.length = 0;
+  const consulta = `delete from produto`
+  await pool.query(consulta)
 } catch (error) {
-  resposta.status(500).json({msg:"Erro ao deletar produto"})
+  resposta.status(500).json({msg:"Erro ao deletar produto", erro: error.message})
 }
 })
 
