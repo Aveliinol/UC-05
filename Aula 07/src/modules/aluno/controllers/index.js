@@ -15,9 +15,19 @@ class AlunoController{
     }
     static async editar(req, res){
         try {
-            
+            const matricula = req.params.id
+            const {nome, email, senha} = req.body
+           if (!matricula){
+                return res.status(400).json({msg:"Informe a matricula"})
+            }
+            const editAluno = await AlunoModel.editar(matricula, nome, email, senha)
+            if(!editAluno){
+                return res.status(400).json({msg:"Aluno não encontrado"})
+            }
+            res.status(200).json({msg:"Aluno editado com sucesso", aluno: editAluno})
+         
         } catch (error) {
-           
+            res.status(500).json({msg:"Erro ao editar aluno", erro: error.message})
         }
     }
     static async listar(req, res){ 
@@ -33,7 +43,7 @@ class AlunoController{
     }
     static async listarPorMatricula(req, res){
         try {
-            const matricula = req.parems.id
+            const matricula = req.params.id
             const aluno = await AlunoModel.listarPorMatricula(matricula)
             if(!aluno){
                 return res.status(400).json({msg: "Aluno não encontrado"})
@@ -46,16 +56,24 @@ class AlunoController{
     }
     static async deletarPorMatricula(req, res){
         try {
-            
+            const matricula = req.params.id
+            const aluno = await AlunoModel.deletarPorMatricula(matricula)
+            if(aluno.length === 0){
+                return res.status(400).json({msg:"Aluno não encontrado"})
+            }
+            res.status(200).json({msg:"Aluno deletado com sucesso"})
         } catch (error) {
-           
+            res.status(500).json({msg:"Erro ao deletar aluno", erro: error.message})
         }
     }
     static async delatarAll(req, res){
         try {
-            
+            const aluno = await AlunoModel.delatarAll()
+            res.status(200).json({msg:"Alunos excluídos com sucesso"})
         } catch (error) {
-           
+            res.status(500).json({msg:"Erro ao deletar alunos", erro: error.message})
         }
     }
 }
+
+module.exports(AlunoController)
