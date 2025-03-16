@@ -3,8 +3,8 @@ const professorModel = require('../models/index')
 class ProfessorController {
     static async criar() {
         try {
-            const { matricula, nome, email, senha, turma } = req.body
-            if (!matricula || !nome || !email || !senha || !turma) {
+            const { matricula, nome, email, senha} = req.body
+            if (!matricula || !nome || !email || !senha) {
                 return res.status(400).json({ msg: "Todos os campos devem ser preenchidos" })
             }
             const novoProf = await professorModel.criar(matricula, nome, email, senha, turma)
@@ -17,11 +17,11 @@ class ProfessorController {
     static async editar() {
         try {
             const matricula = req.params.id
-            const { nome, email, senha, turma } = req.body
+            const { nome, email, senha} = req.body
             if (!matricula) {
                 return res.status(400).json({ msg: "Informe a matricula" })
             }
-            const editProfessor = await professorModel.editar(matricula, nome, email, senha, turma)
+            const editProfessor = await professorModel.editar(matricula, nome, email, senha)
             if (!editProfessor) {
                 return res.status(400).json({ msg: "Professor não encontrado" })
             }
