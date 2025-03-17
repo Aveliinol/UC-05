@@ -3,7 +3,7 @@ const { pool } = require('../../../config/database');
 class Aluno {
   static async criar(matricula, nome, email, senha) {
     const dados = [matricula, nome, email, senha]
-    const consulta = `Insert into aluno (matricula, nome, email, senha) values ($1 $2 $3 $4) returning*`
+    const consulta = `Insert into aluno (matricula, nome, email, senha) values ($1,$2,$3,$4) returning*`
     const novoAluno = await pool.query(consulta, dados)
     return novoAluno.rows
   }
