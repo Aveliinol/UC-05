@@ -3,11 +3,11 @@ const professorModel = require('../models/index')
 class ProfessorController {
     static async criar() {
         try {
-            const { matricula, nome, email, senha} = req.body
-            if (!matricula || !nome || !email || !senha) {
+            const { matricula, nome, email, senha, areaAtuacao } = req.body
+            if (!matricula || !nome || !email || !senha || !areaAtuacao) {
                 return res.status(400).json({ msg: "Todos os campos devem ser preenchidos" })
             }
-            const novoProf = await professorModel.criar(matricula, nome, email, senha)
+            const novoProf = await professorModel.criar(matricula, nome, email, senha, areaAtuacao)
             res.status(201).json({ msg: "Professor criado com sucesso", Prof: novoProf })
         } catch (error) {
             res.status(500).json({ msg: "Erro ao cadastrar Professor", erro: error.message })
@@ -16,13 +16,16 @@ class ProfessorController {
     }
     static async editar() {
         try {
-            const matricula = req.params.id
-            const { nome, email, senha} = req.body
+            const matricula = req.params.matricula
+            const { nome, email, senha, areaAtuacao } = req.body
             if (!matricula) {
                 return res.status(400).json({ msg: "Informe a matricula" })
             }
-            const editProfessor = await professorModel.editar(matricula, nome, email, senha)
-            if (!editProfessor) {
+            if (!nome || !email || !senha) {
+                return res.status(400).json({ msg: "Todos os campos devem ser preenchidos" })
+            }
+            const editProfessor = await professorModel.editar(matricula, nome, email, senha, areaAtuacao)
+            if (editProfessor.length === 0) {
                 return res.status(400).json({ msg: "Professor não encontrado" })
             }
             res.status(200).json({ msg: "Professor editado com sucesso", prof: editProfessor })
@@ -33,9 +36,9 @@ class ProfessorController {
     }
     static async listarPorMatricula() {
         try {
-            const matricula = req.params.id
+            const matricula = req.params.matricula
             const professor = await professorModel.listarPorMatricula(matricula)
-            if (!professor) {
+            if (professor.length === 0) {
                 return res.status(400).json({ msg: "professor não encontrado" })
             }
             res.status(200).json(professor)
@@ -57,7 +60,7 @@ class ProfessorController {
     }
     static async deletarPorMatricula() {
         try {
-            const matricula = req.params.id
+            const matricula = req.params.matricula
             const professor = await professorModel.deletarPorMatricula(matricula)
             if (professor.length === 0) {
                 return res.status(400).json({ msg: "Professor não encontrado" })
@@ -69,13 +72,13 @@ class ProfessorController {
     }
     static async deletarAll() {
         try {
-            const professor = await professorModel.deletarAll()
+            await professorModel.deletarAll()
             res.status(200).json({ msg: "Professores excluídos com sucesso" })
         } catch (error) {
-            res.status(500).json({ msg: "Erro ao deletar professores", erro: error.message })
+            res.status(500).json({ msg: "Erro ao deletar todos os professores", erro: error.message })
         }
 
     }
 }
 
-module.exports(ProfessorController)
+module.exports = ProfessorController
