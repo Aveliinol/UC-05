@@ -7,7 +7,7 @@ class ProfessorController {
             if (!matricula || !nome || !email || !senha) {
                 return res.status(400).json({ msg: "Todos os campos devem ser preenchidos" })
             }
-            const novoProf = await professorModel.criar(matricula, nome, email, senha, turma)
+            const novoProf = await professorModel.criar(matricula, nome, email, senha)
             res.status(201).json({ msg: "Professor criado com sucesso", Prof: novoProf })
         } catch (error) {
             res.status(500).json({ msg: "Erro ao cadastrar Professor", erro: error.message })

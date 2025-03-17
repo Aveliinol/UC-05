@@ -1,8 +1,8 @@
-const  {pool} = require('../../../config/database');
+const {pool} = require('../../../config/database');
 
 class Professor{
    static async criar(matricula, nome, email, senha){
-    const dados = [matricula, nome, email, senha, turma]
+    const dados = [matricula, nome, email, senha]
     const consulta = `Insert into professor (matricula, nome, email, senha) values ($1 $2 $3 $4) returning*`
     const novoProf = await pool.query(consulta, dados)
     return novoProf.rows
