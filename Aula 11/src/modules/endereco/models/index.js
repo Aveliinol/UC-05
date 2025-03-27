@@ -52,7 +52,7 @@ class EnderecoModel{
         ]
 
         const consulta = `update endereco set cep = $2, logradouro = $3, numero = $4, complemento = $5,
-         bairro = $6, localidade $7, uf = $8, ponto_referencia = $9 where matricula = $1 `
+         bairro = $6, localidade $7, uf = $8, ponto_referencia = $9 where matricula = $1 returning *`
         
         const resultado = await pool.query(consulta, dados)
         return resultado.rows
