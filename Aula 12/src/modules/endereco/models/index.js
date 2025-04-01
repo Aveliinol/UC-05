@@ -83,7 +83,7 @@ class EnderecoModel{
     static async listarEndereco(matricula){
         const dados = [matricula]
         const consulta = `select aluno.*, endereco.* from aluno 
-        join endereco on aluno.matricula = endereco.matricula_id
+        join endereco on aluno.matricula = endereco.matricula
         where aluno.matricula = $1`
         const resultado = await pool.query(consulta, dados)
         return resultado.rows

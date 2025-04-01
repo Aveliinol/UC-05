@@ -83,6 +83,7 @@ class EnderecoController{
             if (endereco.length === 0) {
                 return res.status(404).json({ msg: "Endereço não encontrado" })
             }
+            res.status(200).json(endereco)
         } catch (error) {
         res.status(500).json({msg: "Erro interno do servidor. Por favor tente mais tarde!", erro: error.message}) 
         }
