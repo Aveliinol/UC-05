@@ -1,46 +1,46 @@
-const { pool } = require('../../../config/database');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../../../config/configBd');
 
-class Professor {
-   static async criar(matricula, nome, email, senha, areaAtuacao) {
-      const dados = [matricula, nome, email, senha, areaAtuacao]
-      const consulta = `Insert into professor (matricula, nome, email, senha, areaAtuacao) values ($1 $2 $3 $4 5$) returning*`
-      const novoProf = await pool.query(consulta, dados)
-      return novoProf.rows
+const Professor = sequelize.define(
+   'Professor',
+   {
+      matricula:{
+         type: DataTypes.CHAR(8),
+         primaryKey: true,
+         validate:{
+            is:{
+               args: /^[A-Za-z][0-9]{7}$/,
+               msg:'A matricula deve começar com uma letra e mais 7 números!'
+            }
+         }
+      },
+      nome:{
+         type: DataTypes.STRING(100),
+         allowNull: false,
+         validate:{
+            len:{
+               args:[2, 100]
+            }
+         }
+      },
+      email:{
+         type: DataTypes.STRING(100),
+         allowNull: false,
+         unique: true,
+         validate:{
+            isEmail:{
+               msg:'Forneça um e-mail valido'
+            }
+         }
+      },
+      senha:{
+         type: DataTypes.CHAR(10),
+         allowNull: false,
+         validate:{
+            args: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{10,}$/
+         }
+      }
    }
-
-   static async editar(matricula, nome, email, senha, areaAtuacao) {
-      const dados = [matricula, nome, email, senha, areaAtuacao]
-      const consulta = `update professor set nome = $2, email = $3, senha = $4, areaAtuacao = $5 where matricula = $1 returning*`
-      const editProf = await pool.query(consulta, dados)
-      return editProf.rows
-   }
-
-   static async listarPorMatricula(matricula) {
-      const dados = [matricula]
-      const consulta = `select * from professor where matricula = $1`
-      const professor = await pool.query(consulta, dados)
-      return professor.rows
-   }
-
-   static async listarAll() {
-      const consulta = `select * from professor`
-      const professor = await pool.query(consulta)
-      return professor.rows
-   }
-
-   static async deletarPorMatricula(matricula) {
-      const dados = [matricula]
-      const consulta = `delete from professor where matricula = $1 returning*`
-      const professor = await pool.query(consulta, dados)
-      return professor.rows
-   }
-
-   static async deletarAll() {
-      const consulta = `delete from aluno returning*`
-      const professor = await pool.query(consulta)
-      return professor.rows
-   }
-
-}
+)
 
 module.exports = Professor

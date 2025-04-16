@@ -24,12 +24,12 @@ const Aluno = sequelize.define(
       }
     },
     senha: {
-      type: DataTypes.STRING(16),
+      type: DataTypes.STRING(10),
       allowNull: false,
       validate:{
         len:{
-          args:[8,16],
-          msg: "A senha deve ter no minimo 8 caracteres e no máximo 16!"
+          args:[10],
+          msg: "A senha deve ter 10 caracteres!"
         }
       }
     }
