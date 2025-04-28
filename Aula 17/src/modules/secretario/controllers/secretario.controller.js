@@ -45,14 +45,13 @@ class SecretarioController {
             if (!nome || !senha || !turma_cod) {
                 return res.status(400).json({ msg: 'Todos os campos devem ser preenchidos' });
             }
-            const aluno = await AlunoModel.findByPk({matricula});
-            if (!aluno) {
+             const alunoAtualizado = await AlunoModel.update(
+                { nome: nome, senha: senha, turma_cod: turma_cod },
+                { where: {matricula: matricula}  }
+            );
+            if (alunoAtualizado.length === 0) {
                 return res.status(404).json({ msg: 'Aluno não encontrado!' });
             }
-             const alunoAtualizado = await AlunoModel.update(
-                { nome, senha, turma_cod },
-                { where: { matricula } }
-            );
             res.status(200).json(alunoAtualizado);
         } catch (error) {
             res.status(500).json({ msg: 'Erro interno do servidor. Por favor tente novamente mais tarde' });
