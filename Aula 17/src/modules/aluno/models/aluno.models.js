@@ -49,8 +49,8 @@ const AlunoModel = sequelize.define('AlunoModel', {
         type: Datatypes.CHAR(9),
         allowNull: false,
         references: {
-            model: turma,
-            key: turma_cod
+            model: 'turma',
+            key: 'turma_cod'
         }
     }
 },
