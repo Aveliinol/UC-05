@@ -7,7 +7,7 @@ class ProfessorController {
             if (!matricula || !nome || !email || !senha) {
                 return res.status(400).json({ msg: ' Todos os campos devem ser preenchidos' })
             }
-            const professor = await ProfessorModel.create({matricula, nome, email, senha})
+            const professor = await ProfessorModel.create({ matricula, nome, email, senha })
             res.status(201).json(professor)
         } catch (error) {
             res.status(500).json({ msg: 'Erro interno do servidor. Por favor tente novamente mais tarde' })
@@ -25,7 +25,7 @@ class ProfessorController {
                 { where: { matricula: matricula } }
             );
             if (professor.length === 0) {
-                return res.status(404).json({ msg: 'Professor não encontrado!' });
+                return res.status(404).json({ msg: 'Nenhum professor encontrado!' });
             }
             res.status(200).json(professor);
         } catch (error) {
@@ -48,7 +48,7 @@ class ProfessorController {
             const matricula = req.params.matricula
             const professor = await ProfessorModel.findByPk(matricula)
             if (!professor) {
-                return res.status(200).json({ msg: 'Professor não encontrado!' })
+                return res.status(404).json({ msg: 'Nenhum professor encontrado!' })
             }
             res.status(200).json(professor)
         } catch (error) {
@@ -66,16 +66,16 @@ class ProfessorController {
     static async deletarProfessorPorMatricula(req, res) {
         try {
             const matricula = req.params.matricula
-            const professor = await ProfessorModel.findByPk( matricula );
+            const professor = await ProfessorModel.findByPk(matricula);
             if (!professor) {
-                return res.status(404).json({ msg: 'Professor não encontrado!' });
+                return res.status(404).json({ msg: 'Nenhum professor encontrado!' });
             }
             await ProfessorModel.destroy({
                 where: {
                     matricula: matricula
                 }
             })
-            res.status(200).json({ msg: 'Professor excluido com sucesso!' })
+            res.status(200).json({ msg: 'Professor excluído com sucesso!' })
         } catch (error) {
             res.status(500).json({ msg: 'Erro interno do servidor. Por favor tente novamente mais tarde' });
         }
