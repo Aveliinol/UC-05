@@ -18,10 +18,6 @@ const TurmaModel = sequelize.define(
           }
         }
       },
-      nome: {
-        type: DataTypes.STRING(100),
-        allowNull: false,
-      },
       fk_cod_curso:{
         type: DataTypes.INTEGER,
         allowNull: false,
